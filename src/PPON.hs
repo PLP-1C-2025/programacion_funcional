@@ -2,6 +2,7 @@ module PPON where
 
 import Documento
 
+
 data PPON
   = TextoPP String
   | IntPP Int
@@ -20,8 +21,8 @@ foldPPON casoTexto casoInt casoObjeto pp = case pp of
 
 pponAtomico :: PPON -> Bool
 pponAtomico pp = case pp of
-  TextoPP _ -> True 
-  IntPP _ -> True 
+  TextoPP _ -> True
+  IntPP _ -> True
   ObjetoPP _ -> False
 
 
@@ -33,7 +34,7 @@ pponObjetoSimple pp = case pp of
   ObjetoPP xs -> foldr (\(_, ppon) -> (&&) (pponAtomico ppon)) True xs
 
 intercalar :: Doc -> [Doc] -> Doc
-intercalar = error "PENDIENTE: Ejercicio 7"
+intercalar docIntercalado = foldr (\doc rec -> if rec /= vacio then doc <+> docIntercalado <+> rec else doc <+> rec ) vacio
 
 entreLlaves :: [Doc] -> Doc
 entreLlaves [] = texto "{ }"
@@ -48,7 +49,23 @@ entreLlaves ds =
     <+> texto "}"
 
 aplanar :: Doc -> Doc
-aplanar = error "PENDIENTE: Ejercicio 8"
+aplanar = foldDoc vacio (\t1 rec -> texto t1 <+> rec) (\_ rec -> texto " " <+> rec)
 
+-- {"clave_1": valor_1, "clave_2": valor_2, ...}
 pponADoc :: PPON -> Doc
-pponADoc = error "PENDIENTE: Ejercicio 9"
+pponADoc pp = case pp of
+  TextoPP a   -> texto (show a)
+  IntPP   a   -> texto (show a)
+  ObjetoPP pps  -> if pponObjetoSimple (ObjetoPP pps) then
+                          aplanar (entreLlaves (map (\x -> texto (fst x) <+> texto ": " <+> pponADoc (snd x)) pps))
+                    else texto ""
+{-
+ pericles = ObjetoPP [("nombre", TextoPP "Pericles"), ("edad", IntPP 30)]
+ merlina = ObjetoPP [("nombre", TextoPP "Merlina"), ("edad", IntPP 24), ("alturo", IntPP 2)]
+ addams = ObjetoPP [("0", pericles), ("1", merlina)]
+ 
+ {
+ "0": { "nombre": "Pericles", "edad": 30, "altura": 2 },
+ "1": { "nombre": "Merlina", "edad": 24 }
+ } 
+-}
