@@ -50,11 +50,14 @@ infixr 6 <+>
 -- s no debe contener saltos de l´ınea
 -- d debe ser Vacio o Linea i d’
 -- Va hasta el final, encuentra Vacio y la reemplaza por d2, no hay vacio entre los textos por esto. Si d1 y d2 cumplen a su vez el inv entonces estaría bien
--- (<+>) :: Doc -> Doc -> Doc
--- d1 <+> d2 = foldDoc d2 (\texto rec -> Texto texto rec) (\espacios rec -> Linea espacios rec) d1
-
 (<+>) :: Doc -> Doc -> Doc
-Texto s1 Vacio <+> Texto s2 d1 = Texto (s1++s2) d1
+d1 <+> d2 = foldDoc d2 (\texto rec -> case rec of 
+                                      Vacio -> Texto texto rec
+                                      Linea _ _ -> Texto texto rec
+                                      Texto t1 d1 -> Texto (texto ++ t1) d1) (\espacios rec -> Linea espacios rec) d1
+
+--(<+>) :: Doc -> Doc -> Doc
+--Texto s1 Vacio <+> Texto s2 d1 = Texto (s1++s2) d1
 
 
 
