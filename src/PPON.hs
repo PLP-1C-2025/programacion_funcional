@@ -54,18 +54,8 @@ aplanar = foldDoc vacio (\t1 rec -> texto t1 <+> rec) (\_ rec -> texto " " <+> r
 -- {"clave_1": valor_1, "clave_2": valor_2, ...}
 pponADoc :: PPON -> Doc
 pponADoc pp = case pp of
-  TextoPP a   -> texto (show a)
-  IntPP   a   -> texto (show a)
+  TextoPP tex  -> texto (show tex)
+  IntPP   num   -> texto (show num)
   ObjetoPP pps  -> if pponObjetoSimple (ObjetoPP pps) then
-                          aplanar (entreLlaves (map (\x -> texto (fst x) <+> texto ": " <+> pponADoc (snd x)) pps))
-                    else texto ""
-{-
- pericles = ObjetoPP [("nombre", TextoPP "Pericles"), ("edad", IntPP 30)]
- merlina = ObjetoPP [("nombre", TextoPP "Merlina"), ("edad", IntPP 24), ("alturo", IntPP 2)]
- addams = ObjetoPP [("0", pericles), ("1", merlina)]
- 
- {
- "0": { "nombre": "Pericles", "edad": 30, "altura": 2 },
- "1": { "nombre": "Merlina", "edad": 24 }
- } 
--}
+                          aplanar (entreLlaves (map (\tupla -> texto (fst tupla) <+> texto ": " <+> pponADoc (snd tupla)) pps))
+                    else entreLlaves (map (\tupla -> texto (fst tupla) <+> texto ": " <+> pponADoc (snd tupla)) pps)
