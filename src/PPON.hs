@@ -25,7 +25,6 @@ pponAtomico pp = case pp of
   IntPP _ -> True
   ObjetoPP _ -> False
 
-
 -- Interpretamos que si le pasas un pponAtomico es ademas un ObjetoSimple
 pponObjetoSimple :: PPON -> Bool
 pponObjetoSimple pp = case pp of
@@ -57,5 +56,5 @@ pponADoc pp = case pp of
   TextoPP tex  -> texto (show tex)
   IntPP   num   -> texto (show num)
   ObjetoPP pps  -> if pponObjetoSimple (ObjetoPP pps) then
-                          aplanar (entreLlaves (map (\tupla -> texto (fst tupla) <+> texto ": " <+> pponADoc (snd tupla)) pps))
-                    else entreLlaves (map (\tupla -> texto (fst tupla) <+> texto ": " <+> pponADoc (snd tupla)) pps)
+                          aplanar (entreLlaves (map (\tupla -> texto (show (fst tupla)) <+> texto ": " <+> pponADoc (snd tupla)) pps))
+                    else entreLlaves (map (\tupla -> texto (show (fst tupla)) <+> texto ": " <+> pponADoc (snd tupla)) pps)
