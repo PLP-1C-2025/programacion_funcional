@@ -56,5 +56,6 @@ pponADoc pp = case pp of
   TextoPP tex  -> texto (show tex)
   IntPP   num   -> texto (show num)
   ObjetoPP pps  -> if pponObjetoSimple (ObjetoPP pps) then
-                          aplanar (entreLlaves (map (\tupla -> texto (show (fst tupla)) <+> texto ": " <+> pponADoc (snd tupla)) pps))
-                    else entreLlaves (map (\tupla -> texto (show (fst tupla)) <+> texto ": " <+> pponADoc (snd tupla)) pps)
+                          aplanar rec
+                    else rec
+   where rec = entreLlaves (map (\tupla -> texto (show (fst tupla)) <+> texto ": " <+> pponADoc (snd tupla)) pps)
