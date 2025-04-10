@@ -20,10 +20,13 @@ allTests =
       "Ejercicio 9" ~: testsEj9
     ]
 
-testsEj1 :: Test
+testsEj1 :: Test -- Agregué todo este test
 testsEj1 = 
   test [
-    contarLineas (texto "a" <+> texto "b") ~?= 1
+    contarLineas (texto "a" <+> texto "b") ~?= 1,
+    contarLineas (vacio <+> vacio) ~?= 0,
+    contarLineas (texto "a" <+> linea <+> texto "b") ~?= 2,
+    contarLineas (linea <+> linea <+> linea <+> texto "a") ~?= 4
   ]
 
 testsEj2 :: Test
@@ -31,7 +34,9 @@ testsEj2 =
   test
     [ vacio <+> vacio ~?= vacio,
       texto "a" <+> texto "b" ~?= texto "ab",
-      (texto "a" <+> linea) <+> texto "b" ~?= texto "a" <+> (linea <+> texto "b")
+      (texto "a" <+> linea) <+> texto "b" ~?= texto "a" <+> (linea <+> texto "b"),
+      -- Los siguientes tests son nuestros: 
+      texto "a" <+> texto "b" <+> linea <+> texto "c" ~?= texto "ab" <+> linea <+> texto "c" 
     ]
 
 testsEj3 :: Test
@@ -41,6 +46,7 @@ testsEj3 =
       indentar 2 (texto "a") ~?= texto "a",
       indentar 2 (texto "a" <+> linea <+> texto "b") ~?= texto "a" <+> indentar 2 (linea <+> texto "b"),
       indentar 2 (linea <+> texto "a") ~?= indentar 1 (indentar 1 (linea <+> texto "a"))
+      -- Los siguientes tests son nuestros: 
     ]
 
 testsEj4 :: Test
