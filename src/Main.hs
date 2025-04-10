@@ -10,7 +10,8 @@ main = runTestTTAndExit allTests
 allTests :: Test
 allTests =
   test
-    [ "Ejercicio 2" ~: testsEj2,
+    [ "Ejercicio 1" ~: testsEj1, -- agrego este caso
+      "Ejercicio 2" ~: testsEj2,
       "Ejercicio 3" ~: testsEj3,
       "Ejercicio 4" ~: testsEj4,
       "Ejercicio 6" ~: testsEj6,
@@ -18,6 +19,12 @@ allTests =
       "Ejercicio 8" ~: testsEj8,
       "Ejercicio 9" ~: testsEj9
     ]
+
+testsEj1 :: Test
+testsEj1 = 
+  test [
+    contarLineas (texto "a" <+> texto "b") ~?= 1
+  ]
 
 testsEj2 :: Test
 testsEj2 =

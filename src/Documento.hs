@@ -8,6 +8,7 @@ module Documento
     indentar,
     mostrar,
     imprimir,
+    contarLineas -- SE PUEDE AGREGAR ESTA FUNCION ACA PARA PROBAR EL FOLDDOC EN UN TEST?
   )
 where
 
