@@ -8,16 +8,6 @@ data PPON
   | IntPP Int
   | ObjetoPP [(String, PPON)]
   deriving (Eq, Show)
-{- 
-foldPPON :: (String -> b) -> (Int -> b) -> ([(String, PPON)] -> b -> b) -> PPON -> b
-foldPPON casoTexto casoInt casoObjeto pp = case pp of
-  TextoPP texto -> casoTexto texto
-  IntPP numero -> casoInt numero
-  ObjetoPP (tupla:listaTuplas) -> (casoObjeto tupla)
- where rec = foldPPON casoTexto casoInt casoObjeto
- -}
--- longitudPPON :: PPON -> Int
--- longitudPPON pp = foldPPON (const 1) (const 1) (\) pp 
 
 pponAtomico :: PPON -> Bool
 pponAtomico pp = case pp of
