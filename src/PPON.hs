@@ -8,16 +8,6 @@ data PPON
   | IntPP Int
   | ObjetoPP [(String, PPON)]
   deriving (Eq, Show)
-{- 
-foldPPON :: (String -> b) -> (Int -> b) -> ([(String, PPON)] -> b -> b) -> PPON -> b
-foldPPON casoTexto casoInt casoObjeto pp = case pp of
-  TextoPP texto -> casoTexto texto
-  IntPP numero -> casoInt numero
-  ObjetoPP (tupla:listaTuplas) -> (casoObjeto tupla)
- where rec = foldPPON casoTexto casoInt casoObjeto
- -}
--- longitudPPON :: PPON -> Int
--- longitudPPON pp = foldPPON (const 1) (const 1) (\) pp 
 
 pponAtomico :: PPON -> Bool
 pponAtomico pp = case pp of
@@ -50,7 +40,8 @@ entreLlaves ds =
 aplanar :: Doc -> Doc
 aplanar = foldDoc vacio (\t1 rec -> texto t1 <+> rec) (\_ rec -> texto " " <+> rec)
 
--- {"clave_1": valor_1, "clave_2": valor_2, ...}
+-- pponAdoc cumple con el esquema Estructural, pues: su caso base no es recursivo y no tiene acceso a la "cola" (en este caso, el segundo elemento de la tupla)  
+-- del Doc de ninguna forma que no sea mediante la llamada recursiva pponADoc
 pponADoc :: PPON -> Doc
 pponADoc pp = case pp of
   TextoPP tex  -> texto (show tex)
@@ -58,4 +49,4 @@ pponADoc pp = case pp of
   ObjetoPP pps  -> if pponObjetoSimple (ObjetoPP pps) then
                           aplanar rec
                     else rec
-   where rec = entreLlaves (map (\tupla -> texto (show (fst tupla)) <+> texto ": " <+> pponADoc (snd tupla)) pps)
+    where rec = entreLlaves (map (\tupla -> texto (show (fst tupla)) <+> texto ": " <+> pponADoc (snd tupla)) pps)
