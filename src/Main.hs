@@ -57,7 +57,7 @@ testsEj4 =
       mostrar (indentar 3 (linea <+> linea <+> linea)) ~?= "\n   \n   \n   "
     ]
 -- 
-pericles, merlina, addams, familias, ian, rama, thiago :: PPON
+pericles, merlina, addams, familias, ian, rama, thiago, santy :: PPON
 pericles = ObjetoPP [("nombre", TextoPP "Pericles"), ("edad", IntPP 30)]
 merlina = ObjetoPP [("nombre", TextoPP "Merlina"), ("edad", IntPP 24)]
 addams = ObjetoPP [("0", pericles), ("1", merlina)]
@@ -66,6 +66,7 @@ familias = ObjetoPP [("Addams", addams)]
 ian = ObjetoPP [("Nombre", TextoPP "Ian"), ("Apellido", TextoPP "Pipo"), ("Flia", pericles)]
 rama = TextoPP "hola"
 thiago = IntPP 14
+santy = ObjetoPP [("amalgama 1", ian), ("amalgama 2", rama), ("amalgama 3", thiago)]
 
 testsEj5 :: Test
 testsEj5 =
@@ -83,7 +84,6 @@ testsEj5 =
     ]
 
 
-santy = ObjetoPP [("amalgama 1", ian), ("amalgama 2", rama), ("amalgama 3", thiago)]
 testsEj6 :: Test
 testsEj6 =
   test
@@ -125,13 +125,19 @@ testsEj8 =
   test
     [ mostrar (aplanar (a <+> linea <+> b <+> linea <+> c)) ~?= "a b c",
       mostrar (aplanar vacio) ~?= "",
+      -- Nuestros:
       mostrar (aplanar linea <+> linea <+> a) ~?= "  a"
     ]
+
+-- ian = ObjetoPP [("Nombre", TextoPP "Ian"), ("Apellido", TextoPP "Pipo"), ("Flia", pericles)]
 
 testsEj9 :: Test
 testsEj9 =
   test
     [ mostrar (pponADoc pericles) ~?= "{ \"nombre\": \"Pericles\", \"edad\": 30 }",
       mostrar (pponADoc addams) ~?= "{\n  \"0\": { \"nombre\": \"Pericles\", \"edad\": 30 },\n  \"1\": { \"nombre\": \"Merlina\", \"edad\": 24 }\n}",
-      mostrar (pponADoc familias) ~?= "{\n  \"Addams\": {\n    \"0\": { \"nombre\": \"Pericles\", \"edad\": 30 },\n    \"1\": { \"nombre\": \"Merlina\", \"edad\": 24 }\n  }\n}"
+      mostrar (pponADoc familias) ~?= "{\n  \"Addams\": {\n    \"0\": { \"nombre\": \"Pericles\", \"edad\": 30 },\n    \"1\": { \"nombre\": \"Merlina\", \"edad\": 24 }\n  }\n}",
+      -- Nuestros:
+      mostrar (pponADoc ian) ~?= "{\n  \"Nombre\": \"Ian\",\n  \"Apellido\": \"Pipo\",\n  \"Flia\": { \"nombre\": \"Pericles\", \"edad\": 30 }\n}"
+                                --  "{\n \"Nombre\": \"Ian\", \"Apellido\": \"Pipo\",\n  \"Flia\": \"nombre\": \"Pericles\", \"edad\": 30 }}"
     ]
