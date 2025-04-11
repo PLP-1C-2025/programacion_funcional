@@ -10,24 +10,17 @@ main = runTestTTAndExit allTests
 allTests :: Test
 allTests =
   test
-    [ "Ejercicio 1" ~: testsEj1, -- agrego este caso
+    [
       "Ejercicio 2" ~: testsEj2,
       "Ejercicio 3" ~: testsEj3,
       "Ejercicio 4" ~: testsEj4,
+      "Ejercicio 5" ~: testsEj5,
       "Ejercicio 6" ~: testsEj6,
       "Ejercicio 7" ~: testsEj7,
       "Ejercicio 8" ~: testsEj8,
       "Ejercicio 9" ~: testsEj9
     ]
 
-testsEj1 :: Test -- Agregué todo este test
-testsEj1 = 
-  test [
-    contarLineas (texto "a" <+> texto "b") ~?= 1,
-    contarLineas (vacio <+> vacio) ~?= 0,
-    contarLineas (texto "a" <+> linea <+> texto "b") ~?= 2,
-    contarLineas (linea <+> linea <+> linea <+> texto "a") ~?= 4
-  ]
 
 testsEj2 :: Test
 testsEj2 =
@@ -36,7 +29,8 @@ testsEj2 =
       texto "a" <+> texto "b" ~?= texto "ab",
       (texto "a" <+> linea) <+> texto "b" ~?= texto "a" <+> (linea <+> texto "b"),
       -- Los siguientes tests son nuestros: 
-      texto "a" <+> texto "b" <+> linea <+> texto "c" ~?= texto "ab" <+> linea <+> texto "c" 
+      texto "a" <+> texto "b" <+> linea <+> texto "c" ~?= texto "ab" <+> linea <+> texto "c" ,
+      linea <+> linea <+> linea ~?= linea <+> linea <+> linea
     ]
 
 testsEj3 :: Test
@@ -45,8 +39,11 @@ testsEj3 =
     [ indentar 2 vacio ~?= vacio,
       indentar 2 (texto "a") ~?= texto "a",
       indentar 2 (texto "a" <+> linea <+> texto "b") ~?= texto "a" <+> indentar 2 (linea <+> texto "b"),
-      indentar 2 (linea <+> texto "a") ~?= indentar 1 (indentar 1 (linea <+> texto "a"))
+      indentar 2 (linea <+> texto "a") ~?= indentar 1 (indentar 1 (linea <+> texto "a")),
+
       -- Los siguientes tests son nuestros: 
+      indentar 2 (linea <+> linea <+> linea) ~?= indentar 2 linea <+> indentar 2 linea <+> indentar 2 linea,
+      indentar 1 (texto "a" <+> linea) ~?= texto "a" <+> indentar 1 linea
     ]
 
 testsEj4 :: Test
@@ -54,20 +51,52 @@ testsEj4 =
   test
     [ mostrar vacio ~?= "",
       mostrar linea ~?= "\n",
-      mostrar (indentar 2 (texto "a" <+> linea <+> texto "b")) ~?= "a\n  b"
+      mostrar (indentar 2 (texto "a" <+> linea <+> texto "b")) ~?= "a\n  b",
+      -- Estos son nuestros:
+      mostrar (texto "a" <+> indentar 2 (linea <+> texto "b" <+> linea <+> texto "c")) ~?= "a\n  b\n  c",
+      mostrar (indentar 3 (linea <+> linea <+> linea)) ~?= "\n   \n   \n   "
     ]
-
-pericles, merlina, addams, familias :: PPON
+-- 
+pericles, merlina, addams, familias, ian, rama, thiago :: PPON
 pericles = ObjetoPP [("nombre", TextoPP "Pericles"), ("edad", IntPP 30)]
 merlina = ObjetoPP [("nombre", TextoPP "Merlina"), ("edad", IntPP 24)]
 addams = ObjetoPP [("0", pericles), ("1", merlina)]
 familias = ObjetoPP [("Addams", addams)]
 
+ian = ObjetoPP [("Nombre", TextoPP "Ian"), ("Apellido", TextoPP "Pipo"), ("Flia", pericles)]
+rama = TextoPP "hola"
+thiago = IntPP 14
+
+testsEj5 :: Test
+testsEj5 =
+  test
+    [
+      pponAtomico pericles ~?= False,
+      pponAtomico addams ~?= False,
+      -- Estos son nuestros:
+      pponAtomico familias ~?= False,
+      pponAtomico merlina ~?= False,
+      pponAtomico ian ~?= False,
+      pponAtomico rama ~?= True,
+      pponAtomico thiago ~?= True,
+      pponAtomico santy ~?= False
+    ]
+
+
+santy = ObjetoPP [("amalgama 1", ian), ("amalgama 2", rama), ("amalgama 3", thiago)]
 testsEj6 :: Test
 testsEj6 =
   test
     [ pponObjetoSimple pericles ~?= True,
-      pponObjetoSimple addams ~?= False
+      pponObjetoSimple addams ~?= False,
+      -- Estos son nuestros:
+      pponObjetoSimple familias ~?= False,
+      pponObjetoSimple merlina ~?= True,
+      pponObjetoSimple ian ~?= False,
+      pponObjetoSimple rama ~?= True,
+      pponObjetoSimple thiago ~?= True,
+      pponObjetoSimple santy ~?= False
+
     ]
 
 a, b, c :: Doc
@@ -75,19 +104,28 @@ a = texto "a"
 b = texto "b"
 c = texto "c"
 
+
 testsEj7 :: Test
 testsEj7 =
   test
-    [ mostrar (intercalar (texto ", ") []) ~?= "",
+    [
+      mostrar (intercalar (texto ", ") []) ~?= "",
       mostrar (intercalar (texto ", ") [a, b, c]) ~?= "a, b, c",
       mostrar (entreLlaves []) ~?= "{ }",
-      mostrar (entreLlaves [a, b, c]) ~?= "{\n  a,\n  b,\n  c\n}"
+      mostrar (entreLlaves [a, b, c]) ~?= "{\n  a,\n  b,\n  c\n}",
+      -- Estos son nuestros:
+      mostrar (intercalar (texto "?") [texto "hola", texto "como"]) ~?= "hola?como",
+      mostrar (intercalar (texto " ") [texto "hola", texto "como"]) ~?= "hola como",
+      mostrar (intercalar (texto "") [texto "hola", texto "como"]) ~?= "holacomo",
+      mostrar (intercalar (texto "?-._.{}") [texto "hola", texto "como"]) ~?= "hola?-._.{}como"
     ]
 
 testsEj8 :: Test
 testsEj8 =
   test
-    [ mostrar (aplanar (a <+> linea <+> b <+> linea <+> c)) ~?= "a b c"
+    [ mostrar (aplanar (a <+> linea <+> b <+> linea <+> c)) ~?= "a b c",
+      mostrar (aplanar vacio) ~?= "",
+      mostrar (aplanar linea <+> linea <+> a) ~?= "  a"
     ]
 
 testsEj9 :: Test
