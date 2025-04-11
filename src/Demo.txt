@@ -12,68 +12,133 @@ indentar i = foldDoc Vacio (\texto rec -> Texto texto rec) (\espacios rec -> Lin
 
 Queremos demostrar que:
 
-indentar n (indentar m d ) = indentar (n+m) d, para todo n, m :: Int y d ::Doc
+Definimos nuestro predicado P(x): "indentar n (indentar m x) = indentar (n+m) x, para todo n, m :: Int, x :: Doc". 
+Lo demostraremos por inducción.
 
-Qvq: P(d) => P(x), x :: Doc
+CASO BASE
+Veamos que se cumpla en nuestro caso base. Esto ocurre cuando tenemos el constructor base Vacio :: Doc.
 
-Definimos HI : indentar n (indentar m d) = indentar (n+m) d
+Pasamos a demostrar que vale P(Vacio) teniendo en cuenta los lemas que serán demostrados al final de este documento.
 
-Bpq: para todo x :: Doc, P(x), con P(x) = P(0) && P(1) && P(2)
+  Definimos los lemas dados, tal que:
+  { L1 } indentar k Vacio = Vacio, para todo k :: int
+  { L2 } indentar k (Texto s d ) = Texto s (indentar k d), para todo k :: int, para todo s:: String, para todo d :: Doc
+  { L3 } indentar m (Linea k d) = Linea (m+k) (indentar m d), para todo m, k :: Int y d :: Doc 
 
-Definimos los casos de P tal que:
-P(0) para todo x :: Vacio
-P(1) para todo x :: Texto s d, para todo s :: String, para todo d :: Doc
-P(2) para todo x :: Linea k d, para todo k :: Int, para todo d :: Doc
+P(Vacio): indentar n (indentar m Vacio) = indentar (n+m) Vacio
 
-Definimos los lemas dados, tal que:
-L1 -> indentar k Vacio = Vacio, para todo k :: int
-L2 -> indentar k (Texto s d ) = Texto s (indentar k d), para todo k :: int, para todo s:: String, para todo d :: Doc
-L3 -> indentar m (Linea k d) = Linea (m+k) (indentar m d), para todo m, k :: Int y d :: Doc 
+Basta ver que se reduce a
 
-Pasamos a demostrar que vale P(0)
-P(0) -> indentar n (indentar m Vacio) = indentar (n+m) Vacio
-=> indentar n Vacio = Vacio {L1 * 2}
-=> Vacio = Vacio {L1} ☑
+indentar n Vacio = Vacio { L1 por izquierda y por derecha }
 
-Pasamos a demostrar que vale P(1)
-P(1) -> indentar n (indentar m Texto s d) = indentar (n+m) Texto s d
-=> indentar n Texto s (indentar m d) = Texto s (indentar (n+m) d) {L2 * 2}
-=> Texto s (indentar n (indentar m d)) = Texto s (indentar (n+m) d) {L2}
-=> Texto s (indentar (n+m) d) = Texto s (indentar (n+m) d) {H.I} ☑
+Nuevamente, podemos simplificar la expresión
 
-Pasamos a demostrar que vale P(2)
-P(2) -> indentar m (indentar m Linea k d) = indentar (n+m) Linea k d
-=> indentar n linea (k+m) (indentar m d) = Linea (k+n+m) (indentar (n+m) d) {L3 * 2}
-=> linea (k+m+n) (indentar n (indentar (m) d)) = Linea (k+n+m) (indentar (n+m) d) {L3}
-=> Linea (k+n+m) (indentar (n+m) d) = Linea (k+n+m) (indentar (n+m) d) {HI} ☑
+Vacio = Vacio { L1 } ☑
+
+Luego, esto es trivial y podemos afirmar que P(Vacio) es verdadero.
+
+PASO INDUCTIVO
+Qvq para todo d :: Doc, s :: String, k :: Int: 
+  1. (HI) P(d) => P(Texto s d)
+  2. (HI) P(d) => P(Linea k d)
+
+Pasamos a probar nuestro inciso 1.
+
+Qpq P(d) => P(Texto s d).
+
+(HI) P(d): indentar n (indentar m d) = indentar (n+m) d
+
+Queremos ver que se cumple P(Texto s d): indentar n (indentar m (Texto s d)) = indentar (n+m) (Texto s d).
+Aplicando el lema 2 a ambos lados de la igualdad:
+
+indentar n Texto s (indentar m d) = Texto s (indentar (n+m) d) { L2 por izquierda y por derecha }
+
+Luego, aplicamos el lema 2 nuevamente a nuestro lado izquierdo.
+
+Texto s (indentar n (indentar m d)) = Texto s (indentar (n+m) d) { L2 }
+
+Aparece nuestra HI ( indentar n (indentar m d) ). Reemplazando:
+
+Texto s (indentar (n+m) d) = Texto s (indentar (n+m) d) {H.I} ☑
+
+Pasamos a demostrar que vale el inciso 2.
+Qpq P(d) => P(Linea k d).
+
+(HI) P(d): indentar m (indentar m Linea k d) = indentar (n+m) Linea k d
+
+Queremos ver que P(Linea k d) es verdadero.
+
+P(Linea k d): indentar n (indentar m (Linea k d)) = indentar (n+m) (Linea k d).
+
+Aplicando el lema 3 por ambos lados:
+
+indentar n linea (k+m) (indentar m d) = Linea (k+n+m) (indentar (n+m) d) { L3 por izquierda y por derecha }
+
+Nuevamente aplicamos el lema 3.
+
+linea (k+m+n) (indentar n (indentar m d)) = Linea (k+n+m) (indentar (n+m) d) { L3 }
+
+Luego, por HI:
+
+Linea (k+n+m) (indentar (n+m) d) = Linea (k+n+m) (indentar (n+m) d) { HI } ☑
  
-Si logramos demostrar L1, L2, L3, entonces nuestro P(x) es valido, y queda demostrado P(d) => P(x)
+Si logramos demostrar L1, L2, L3, entonces nuestro P(x) es válido para todo x :: Doc, y queda demostrado P(d) => P(Linea k d) ^ P(Texto s d).
 
 Pasamos a demostar los Lemas:
 
-Aclaración para los Lemas L1 y L2: rec = foldDoc Vacio (\texto rec -> Texto texto rec) (\espacios rec -> Linea (espacios + i) rec) {Por def de foldDoc}
+Aclaración para los Lemas L1 y L2: rec = foldDoc Vacio (\texto rec -> Texto texto rec) (\espacios rec -> Linea (espacios + i) rec) { Por def de foldDoc }.
 
-L1 -> indentar k Vacio = Vacio
-=> foldDoc Vacio (\texto rec -> Texto texto rec) (\espacios rec -> Linea (espacios + k) rec) Vacio {Def indentar, Principio de extensionalidad}
-=> Vacio {Por caso de Vacio}
-=> Vacio = Vacio ☑
+L1: indentar k Vacio = Vacio
 
+Usando la definición de indentar:
 
-L2 -> indentar k (Texto s d) = Texto s (indentar k d)
-=> foldDoc Vacio (\texto rec -> Texto texto rec) (\espacios rec -> Linea (espacios + k) rec) Texto s d {Def indentar, Principio de extensionalidad}
-=> (\texto rec -> Texto texto rec) s (rec d) {Por caso de Texto}
-=> (\texto rec -> Texto texto rec) s (indentar k d) {Def indentar}
-=> Texto s (indentar k d) {por Eta}
-=> Texto s (indentar k d) = Texto s (indentar k d) ☑
+foldDoc Vacio (\texto rec -> Texto texto rec) (\espacios rec -> Linea (espacios + k) rec) Vacio = Vacio { Def indentar, principio de extensionalidad }
 
+Luego,
 
-L3 -> indentar m (Linea k d) = Linea (m+k) (indentar m d)
-=> foldDoc Vacio (\texto rec -> Texto texto rec) (\espacios rec -> Linea (espacios + m) rec) Linea k d {Def indentar, Principio de extensionalidad}
-=> (\espacios rec -> Linea (espacios + m) rec) k rec d {Por caso de Linea}
-=> (\espacios rec -> Linea (espacios + m) rec) k (indentar m d) {Def indentar} 
-=> (\espacios -> Linea (espacios + m) (indentar m d)) k {Eta η}
-=> Linea (k + m) (indentar m d) {Beta β} 
-=> Linea (m + k) (indentar m d) {Por algebra de la suma}
-=> Linea (m + k) (indentar m d) = Linea (m + k) (indentar m d) ☑
+Vacio = Vacio ☑ { Por caso de Vacio }
 
-De esta forma quedan comprobados los Lemas, y por ende, P(d) => P(x) ☑
+L2: indentar k (Texto s d) = Texto s (indentar k d)
+
+Aplicando la definición de indentar:
+
+foldDoc Vacio (\texto rec -> Texto texto rec) (\espacios rec -> Linea (espacios + k) rec) Texto s d = Texto s (indentar k d) {Def indentar, Principio de extensionalidad}
+
+Usando que en el case of entra en el caso texto:
+
+(\texto rec -> Texto texto rec) s (rec d) = Texto s (indentar k d) { Por caso de Texto }
+
+Luego, rec d = foldDoc Vacio (\texto rec -> Texto texto rec) (\espacios rec -> Linea (espacios + k) rec) d
+Por tanto, podemos reemplazar el lado derecho por la definición de indentar.
+
+(\texto rec -> Texto texto rec) s (indentar k d) = Texto s (indentar k d) { Def indentar }
+
+Texto s (indentar k d) = Texto s (indentar k d) ☑ { por Eta η dos veces }
+
+L3: indentar m (Linea k d) = Linea (m+k) (indentar m d)
+
+Usando la definición de indentar:
+
+foldDoc Vacio (\texto rec -> Texto texto rec) (\espacios rec -> Linea (espacios + m) rec) Linea k d = Linea (m+k) (indentar m d) {Def indentar, Principio de extensionalidad}
+
+Luego, por entrar al caso de línea:
+
+(\espacios rec -> Linea (espacios + m) rec) k rec d = Linea (m+k) (indentar m d) { Por caso de Linea } 
+
+Por la definición de indentar, reemplazando el rec:
+
+(\espacios rec -> Linea (espacios + m) rec) k (indentar m d) = Linea (m+k) (indentar m d) { Def indentar } 
+
+Aplicando Eta η a la izquierda:
+
+(\espacios -> Linea (espacios + m) (indentar m d)) k = Linea (m+k) (indentar m d) { Eta η }
+
+Luego, tenemos que:
+
+Linea (k+m) (indentar m d) = Linea (m+k) (indentar m d) { Beta β } 
+
+Y como la suma es conmutativa:
+
+Linea (m+k) (indentar m d) = Linea (m+k) (indentar m d) ☑ { Por álgebra de la suma }
+
+De esta forma quedan comprobados los Lemas, y por ende, P(d) => P(Linea k d) ^ P(Texto s d) ☑

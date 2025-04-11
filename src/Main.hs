@@ -129,7 +129,6 @@ testsEj8 =
       mostrar (aplanar linea <+> linea <+> a) ~?= "  a"
     ]
 
--- ian = ObjetoPP [("Nombre", TextoPP "Ian"), ("Apellido", TextoPP "Pipo"), ("Flia", pericles)]
 
 testsEj9 :: Test
 testsEj9 =
@@ -139,5 +138,4 @@ testsEj9 =
       mostrar (pponADoc familias) ~?= "{\n  \"Addams\": {\n    \"0\": { \"nombre\": \"Pericles\", \"edad\": 30 },\n    \"1\": { \"nombre\": \"Merlina\", \"edad\": 24 }\n  }\n}",
       -- Nuestros:
       mostrar (pponADoc ian) ~?= "{\n  \"Nombre\": \"Ian\",\n  \"Apellido\": \"Pipo\",\n  \"Flia\": { \"nombre\": \"Pericles\", \"edad\": 30 }\n}"
-                                --  "{\n \"Nombre\": \"Ian\", \"Apellido\": \"Pipo\",\n  \"Flia\": \"nombre\": \"Pericles\", \"edad\": 30 }}"
     ]
