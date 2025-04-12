@@ -84,7 +84,7 @@ Linea (k+n+m) (indentar (n+m) d) = Linea (k+n+m) (indentar (n+m) d) { HI } ☑
  
 Si logramos demostrar L1, L2, L3, entonces nuestro P(x) es válido para todo x :: Doc, y queda demostrado P(d) => P(Linea k d) ^ P(Texto s d).
 
-Pasamos a demostar los Lemas:
+Pasamos a demostrar los Lemas:
 
 Aclaración para los Lemas L1 y L2: rec = foldDoc Vacio (\texto rec -> Texto texto rec) (\espacios rec -> Linea (espacios + i) rec) { Por def de foldDoc }.
 
@@ -109,7 +109,7 @@ Usando que en el case of entra en el caso texto:
 (\texto rec -> Texto texto rec) s (rec d) = Texto s (indentar k d) { Por caso de Texto }
 
 Luego, rec d = foldDoc Vacio (\texto rec -> Texto texto rec) (\espacios rec -> Linea (espacios + k) rec) d
-Por tanto, podemos reemplazar el lado derecho por la definición de indentar.
+Por tanto, podemos reemplazar el lado izquierdo por la definición de indentar.
 
 (\texto rec -> Texto texto rec) s (indentar k d) = Texto s (indentar k d) { Def indentar }
 
@@ -131,7 +131,7 @@ Por la definición de indentar, reemplazando el rec:
 
 Aplicando Eta η a la izquierda:
 
-(\espacios -> Linea (espacios + m) (indentar m d)) k = Linea (m+k) (indentar m d) { Eta η }
+(\espacios -> Linea (espacios + m) (indentar m d)) k = Linea (m+k) (indentar m d)
 
 Luego, tenemos que:
 
