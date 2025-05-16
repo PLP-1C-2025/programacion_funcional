@@ -18,12 +18,16 @@ pponAtomico pp = case pp of
 -- Interpretamos que si le pasas un pponAtomico es ademas un ObjetoSimple
 pponObjetoSimple :: PPON -> Bool
 pponObjetoSimple pp = case pp of
-  TextoPP _ -> True 
-  IntPP _ -> True 
-  ObjetoPP xs -> foldr (\(_, ppon) -> (&&) (pponAtomico ppon)) True xs
+  ObjetoPP xs -> all (\(_, ppon) -> pponAtomico ppon) xs 
+  _ -> False
+  --ObjetoPP xs -> foldr (\(_, ppon) -> (&&) (pponAtomico ppon)) True xs
 
 intercalar :: Doc -> [Doc] -> Doc
-intercalar docIntercalado = foldr (\doc rec -> if rec /= vacio then doc <+> docIntercalado <+> rec else doc <+> rec ) vacio
+intercalar _ [] = vacio
+intercalar docIntercalado xs = foldr1 (\doc rec -> doc <+> docIntercalado <+> rec) xs
+
+--intercalar :: Doc -> [Doc] -> Doc
+--intercalar docIntercalado = foldr (\doc rec -> if rec /= vacio then doc <+> docIntercalado <+> rec else doc) vacio
 
 entreLlaves :: [Doc] -> Doc
 entreLlaves [] = texto "{ }"

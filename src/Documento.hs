@@ -34,7 +34,7 @@ texto t = Texto t Vacio
 foldDoc :: b -> (String -> b -> b) -> (Int -> b -> b) -> Doc -> b
 foldDoc casoVacio casoTexto casoLinea doc = case doc of
     Vacio -> casoVacio
-    Texto texto documentoRestante -> casoTexto texto (rec documentoRestante)
+    Texto t documentoRestante -> casoTexto t (rec documentoRestante)
     Linea cantEspacios documentoRestante -> casoLinea cantEspacios (rec documentoRestante)
   where rec = foldDoc casoVacio casoTexto casoLinea
 
@@ -54,20 +54,19 @@ infixr 6 <+>
 
 -- Va hasta el final, encuentra Vacio y la reemplaza por d2, no hay vacio entre los textos por esto. Si d1 y d2 cumplen a su vez el inv entonces estaría bien
 (<+>) :: Doc -> Doc -> Doc
-d1 <+> d2 = foldDoc d2 (\texto rec -> case rec of
-                                      Vacio -> Texto texto rec
-                                      Linea _ _ -> Texto texto rec
+doc1 <+> doc2 = foldDoc doc2 (\t rec -> case rec of
                                       -- En caso de que el final del documento sea Texto y el inicio del siguiente tambien, sus textos se concatenan en un solo Texto
-                                      Texto t1 d1 -> Texto (texto ++ t1) d1) (\espacios rec -> Linea espacios rec) d1
+                                      Texto textoRestante documentoRestante -> Texto (t ++ textoRestante) documentoRestante
+                                      _ -> Texto t rec) Linea doc1
 
 
 -- Por la especificacion de indentar, i >= 0. Por lo tanto el invariante se cumple para toda entrada valida.
 indentar :: Int -> Doc -> Doc
 -- Sobre texto no operamos, por lo que no es posible que se rompa el invariante.
-indentar i = foldDoc Vacio (\texto rec -> Texto texto rec) (\espacios rec -> Linea (espacios+i) rec)
+indentar i = foldDoc Vacio Texto (\espacios rec -> Linea (espacios+i) rec)
 
 mostrar :: Doc -> String
-mostrar = foldDoc "" (\texto rec -> texto ++ rec) (\espacios rec -> "\n" ++ take espacios (repeat ' ') ++ rec)
+mostrar = foldDoc "" (\t rec -> t ++ rec) (\espacios rec -> "\n" ++ take espacios (repeat ' ') ++ rec)
 
 -- | Función dada que imprime un documento en pantalla
 

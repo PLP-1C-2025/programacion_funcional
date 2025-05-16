@@ -11,6 +11,7 @@ allTests :: Test
 allTests =
   test
     [
+      "Ejercicio 1" ~: testsEj1,
       "Ejercicio 2" ~: testsEj2,
       "Ejercicio 3" ~: testsEj3,
       "Ejercicio 4" ~: testsEj4,
@@ -20,6 +21,30 @@ allTests =
       "Ejercicio 8" ~: testsEj8,
       "Ejercicio 9" ~: testsEj9
     ]
+
+testsEj1 :: Test
+testsEj1 =
+  let
+    doc1 = texto "Testing" 
+    doc2 = linea <+> texto "x"
+    doc3 = texto "Testing 1" <+> texto "Testing 2" <+> linea <+> texto "Testing 3"
+    docVacio = vacio
+
+    contarLineas d = foldDoc 0 (\_ rec -> rec) (\_ rec -> 1 + rec) d
+    concatenarTextos d = foldDoc "" (\t rec -> t ++ rec) (\_ rec -> rec) d
+    contarEspaciosLineas d = foldDoc 0 (\_ rec -> rec) (\n rec -> n + rec) d
+    longitudTextos d = foldDoc 0 (\t rec -> length t + rec) (\_ rec -> rec) d
+
+  in
+    test
+      [ contarLineas doc1 ~?= 0,
+        contarLineas doc2 ~?= 1,
+        concatenarTextos doc3 ~?= "Testing 1Testing 2Testing 3",
+        contarEspaciosLineas doc2 ~?= 0,
+        longitudTextos doc3 ~?= 27,
+        longitudTextos docVacio ~?= 0,
+        contarLineas docVacio ~?= 0
+      ]
 
 
 testsEj2 :: Test
@@ -93,8 +118,8 @@ testsEj6 =
       pponObjetoSimple familias ~?= False,
       pponObjetoSimple merlina ~?= True,
       pponObjetoSimple ian ~?= False,
-      pponObjetoSimple rama ~?= True,
-      pponObjetoSimple thiago ~?= True,
+      pponObjetoSimple rama ~?= False,  -- corregido, dado que tomabamos que un atomico era un simple
+      pponObjetoSimple thiago ~?= False,
       pponObjetoSimple santy ~?= False
 
     ]
