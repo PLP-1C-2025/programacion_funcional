@@ -46,14 +46,20 @@ aplanar = foldDoc vacio (\t1 rec -> texto t1 <+> rec) (\_ rec -> texto " " <+> r
 
 {-
 pponAdoc cumple con el esquema global, ya que no posee contadores ni acumuladores (esquema iterativo),
-y además no es primitivo ni estructural, ya que operamos sobre una lista de tipo (String, PPON) y no sobre un solo elemento.
+y además es primitivo y estructural, ya que operamos sobre una lista de tipo (String, PPON) y no sobre un solo elemento, por lo que.
+
+No es un esquema iterativo porque no posee contadores ni acumuladores
+No alcanza un esquema estructural porque operamos sobre el resto del PPON en: pponADoc (snd tupla)
+No alcanza un esquema primitivo porque usamos todas las llamadas recursivas anteriores al hacer 
+map (\(elemTexto, elemPPON) -> texto (show elemTexto) <+> texto ": " <+> pponADoc elemPPON) pps
 -} 
 
 pponADoc :: PPON -> Doc
 pponADoc pp = case pp of
-  TextoPP tex  -> texto (show tex)
-  IntPP   num   -> texto (show num)
-  ObjetoPP pps  -> if pponObjetoSimple (ObjetoPP pps) then
-                          aplanar rec
-                    else rec
-    where rec = entreLlaves (map (\tupla -> texto (show (fst tupla)) <+> texto ": " <+> pponADoc (snd tupla)) pps)
+  TextoPP   tex   ->  texto (show tex)
+  IntPP     num   ->  texto (show num)
+  ObjetoPP  pps   ->  if pponObjetoSimple (ObjetoPP pps) then
+                        aplanar rec
+                      else rec
+
+  where rec = entreLlaves (map (\(elemTexto, elemPPON) -> texto (show elemTexto) <+> texto ": " <+> pponADoc elemPPON) pps)

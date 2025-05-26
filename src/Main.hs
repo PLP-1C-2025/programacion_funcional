@@ -151,7 +151,10 @@ testsEj8 =
     [ mostrar (aplanar (a <+> linea <+> b <+> linea <+> c)) ~?= "a b c",
       mostrar (aplanar vacio) ~?= "",
       -- Nuestros:
-      mostrar (aplanar linea <+> linea <+> a) ~?= "  a"
+      mostrar (aplanar (linea <+> linea <+> a)) ~?= "  a",
+      mostrar (aplanar (a <+> a <+> b)) ~?= "aab",
+      mostrar (aplanar (intercalar (texto ".") [a, b, c, a, b, c])) ~?= "a.b.c.a.b.c",
+      mostrar (aplanar (intercalar (texto ".") [a, linea, linea, linea, c, a, linea, c])) ~?= "a. . . .c.a. .c"
     ]
 
 

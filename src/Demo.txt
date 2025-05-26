@@ -1,18 +1,16 @@
 Dejamos definido nuestro codigo:
 
 foldDoc :: b -> (String -> b -> b) -> (Int -> b -> b) -> Doc -> b
-foldDoc casoVacio casoTexto casoLinea doc = case doc of 
+{F0} foldDoc casoVacio casoTexto casoLinea doc = case doc of 
     Vacio -> casoVacio 
     Texto texto documentoRestante -> casoTexto texto (rec documentoRestante)
     Linea cantEspacios documentoRestante -> casoLinea cantEspacios (rec documentoRestante)
   where rec = foldDoc casoVacio casoTexto casoLinea
 
 indentar :: Int -> Doc -> Doc
-indentar i = foldDoc Vacio (\texto rec -> Texto texto rec) (\espacios rec -> Linea (espacios + i) rec)
+{I0} indentar i = foldDoc Vacio (\texto rec -> Texto texto rec) (\espacios rec -> Linea (espacios + i) rec)
 
-Queremos demostrar que:
-
-Definimos nuestro predicado P(x): "indentar n (indentar m x) = indentar (n+m) x, para todo n, m :: Int, x :: Doc". 
+Definimos nuestro predicado P(x): "Para todo n,m :: Int. indentar n (indentar m x) = indentar (n+m) x". 
 Lo demostraremos por inducción.
 
 CASO BASE
@@ -31,7 +29,7 @@ Basta ver que se reduce a
 
 indentar n Vacio = Vacio { L1 por izquierda y por derecha }
 
-Nuevamente, podemos simplificar la expresión
+Nuevamente, podemos simplificar la expresión con { L1 } por izquierda.
 
 Vacio = Vacio { L1 } ☑
 
@@ -86,59 +84,93 @@ Si logramos demostrar L1, L2, L3, entonces nuestro P(x) es válido para todo x :
 
 Pasamos a demostrar los Lemas:
 
-Aclaración para los Lemas L1 y L2: rec = foldDoc Vacio (\texto rec -> Texto texto rec) (\espacios rec -> Linea (espacios + i) rec) { Por def de foldDoc }.
+Aclaración para los Lemas L2 y L3: rec = foldDoc Vacio (\texto rec' -> Texto texto rec') (\espacios rec' -> Linea (espacios + i) rec') { Por def de foldDoc }.
 
 L1: indentar k Vacio = Vacio
 
-Usando la definición de indentar:
+Usando la definición de indentar (y utilizando principio de extensionalidad):
 
-foldDoc Vacio (\texto rec -> Texto texto rec) (\espacios rec -> Linea (espacios + k) rec) Vacio = Vacio { Def indentar, principio de extensionalidad }
+indentar k Vacio = foldDoc Vacio (\texto rec -> Texto texto rec) (\espacios rec -> Linea (espacios + k) rec) Vacio { I0 }
 
 Luego,
 
-Vacio = Vacio ☑ { Por caso de Vacio }
+foldDoc Vacio (\texto rec -> Texto texto rec) (\espacios rec -> Linea (espacios + k) rec) Vacio
+= case Vacio of 
+  Vacio -> Vacio
+  ... { F0 } (Entra en el caso Vacio)
+  
+  --Texto texto documentoRestante ->  (\texto' rec' -> Texto texto' rec') texto (rec documentoRestante) 
+  --Linea cantEspacios documentoRestante -> (\espacios rec' -> Linea (espacios + k) rec') cantEspacios (rec documentoRestante)
+  where rec = foldDoc Vacio (\texto' rec' -> Texto texto' rec') (\espacios rec' -> Linea (espacios + k) rec) { F0 } 
+  
+= Vacio { DEF CASE }
+
+Luego,
+
+Vacio = Vacio ☑ 
 
 L2: indentar k (Texto s d) = Texto s (indentar k d)
 
 Aplicando la definición de indentar:
 
-foldDoc Vacio (\texto rec -> Texto texto rec) (\espacios rec -> Linea (espacios + k) rec) Texto s d = Texto s (indentar k d) {Def indentar, Principio de extensionalidad}
+indentar k (Texto s d) 
+= foldDoc Vacio (\texto recTexto -> Texto texto recTexto) (\espacios recEspacios -> Linea (espacios + k) recEspacios) (Texto s d) { I0 } 
+= case (Texto s d) of 
+    Texto texto documentoRestante ->  (\texto' recTexto -> Texto texto' recTexto) texto (rec documentoRestante)
+    ... 
+    where rec = foldDoc Vacio (\texto recTexto -> Texto texto recTexto) (\espacios recEspacios -> Linea (espacios + k) recEspacios) { F0 } (Entra en el caso texto)
+= (\texto' recTexto -> Texto texto' recTexto) s (rec d) { DEF CASE }
+= (\rec' -> Texto s recTexto) (rec d) { BETA }
+= Texto s (rec d) { BETA }
+= Texto s (foldDoc Vacio (\texto recTexto -> Texto texto recTexto) (\espacios recEspacios -> Linea (espacios + k) recEspacios) d) { DEF DE REC EN EL FOLD }
+= Texto s (indentar k d) { I0 }
 
-Usando que en el case of entra en el caso texto:
+--foldDoc Vacio (\texto rec -> Texto texto rec) (\espacios rec -> Linea (espacios + k) rec) Texto s d = Texto s (indentar k d) {Def indentar, Principio de extensionalidad}
 
-(\texto rec -> Texto texto rec) s (rec d) = Texto s (indentar k d) { Por caso de Texto }
+--Usando que en el case of entra en el caso texto:
 
-Luego, rec d = foldDoc Vacio (\texto rec -> Texto texto rec) (\espacios rec -> Linea (espacios + k) rec) d
-Por tanto, podemos reemplazar el lado izquierdo por la definición de indentar.
+--(\texto rec -> Texto texto rec) s (rec d) = Texto s (indentar k d) { Por caso de Texto }
 
-(\texto rec -> Texto texto rec) s (indentar k d) = Texto s (indentar k d) { Def indentar }
+--Luego, rec d = foldDoc Vacio (\texto rec' -> Texto texto rec') (\espacios rec' -> Linea (espacios + k) rec') d
 
-Texto s (indentar k d) = Texto s (indentar k d) ☑ { por Eta η dos veces }
+--Por tanto, podemos reemplazar el lado izquierdo por la definición de indentar.
+
+--(\texto rec -> Texto texto rec) s (indentar k d) = Texto s (indentar k d) { Def indentar }
+
+--Texto s (indentar k d) = Texto s (indentar k d) ☑ { por Eta η dos veces }
+
+
+indentar :: Int -> Doc -> Doc
+{I0} indentar i = foldDoc Vacio (\texto rec -> Texto texto rec) (\espacios rec -> Linea (espacios + i) rec)
 
 L3: indentar m (Linea k d) = Linea (m+k) (indentar m d)
 
 Usando la definición de indentar:
 
-foldDoc Vacio (\texto rec -> Texto texto rec) (\espacios rec -> Linea (espacios + m) rec) Linea k d = Linea (m+k) (indentar m d) {Def indentar, Principio de extensionalidad}
-
-Luego, por entrar al caso de línea:
-
-(\espacios rec -> Linea (espacios + m) rec) k rec d = Linea (m+k) (indentar m d) { Por caso de Linea } 
+indentar m (Linea k d) 
+= foldDoc Vacio (\texto recTexto -> Texto texto recTexto) (\espacios recEspacios -> Linea (espacios + m) recEspacios) () { I0 } 
+= case (Linea k d) of 
+    Linea k d -> (\espacios recEspacios -> Linea (espacios + m) recEspacios) k (rec d)
+    ... 
+    where rec = foldDoc Vacio (\texto recTexto -> Texto texto recTexto) (\espacios recEspacios -> Linea (espacios + m) recEspacios) { F0 } (Entra en el caso linea)
+= (\espacios recEspacios -> Linea (espacios + m) recEspacios) k (rec d) { DEF CASE }
+= (\recEspacios -> Linea (k + m) recEspacios) (rec d) { BETA }
+= Linea (k + m) (rec d) { BETA }
 
 Por la definición de indentar, reemplazando el rec:
 
-(\espacios rec -> Linea (espacios + m) rec) k (indentar m d) = Linea (m+k) (indentar m d) { Def indentar } 
+Linea (k + m) (rec d) = Linea (k + m) (foldDoc Vacio (\texto recTexto -> Texto texto recTexto) (\espacios recEspacios -> Linea (espacios + m) recEspacios) d) { DEF DE REC en el WHERE }
 
-Aplicando Eta η a la izquierda:
+Luego por def de Indentar:
 
-(\espacios -> Linea (espacios + m) (indentar m d)) k = Linea (m+k) (indentar m d)
-
-Luego, tenemos que:
-
-Linea (k+m) (indentar m d) = Linea (m+k) (indentar m d) { Beta β } 
+Linea (k + m) (foldDoc Vacio (\texto recTexto -> Texto texto recTexto) (\espacios recEspacios -> Linea (espacios + m) recEspacios) d) = Linea (k + m) (indentar m d)
 
 Y como la suma es conmutativa:
 
-Linea (m+k) (indentar m d) = Linea (m+k) (indentar m d) ☑ { Por álgebra de la suma }
+Linea (k + m) (indentar m d) = Linea (m + k) (indentar m d)
+
+Luego
+
+Linea (m + k) (indentar m d) = Linea (m + k) (indentar m d) ☑ { Por álgebra de la suma }
 
 De esta forma quedan comprobados los Lemas, y por ende, P(d) => P(Linea k d) ^ P(Texto s d) ☑
