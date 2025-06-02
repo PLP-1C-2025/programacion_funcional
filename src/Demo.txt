@@ -118,23 +118,6 @@ indentar k (Texto s d)
 = Texto s (foldDoc Vacio (\texto rec -> Texto texto rec) (\espacios rec -> Linea (espacios + k) rec) d) { DEF DE REC EN EL FOLD }
 = Texto s (indentar k d) { I0 }
 
---foldDoc Vacio (\texto rec -> Texto texto rec) (\espacios rec -> Linea (espacios + k) rec) Texto s d = Texto s (indentar k d) {Def indentar, Principio de extensionalidad}
-
---Usando que en el case of entra en el caso texto:
-
---(\texto rec -> Texto texto rec) s (rec d) = Texto s (indentar k d) { Por caso de Texto }
-
---Luego, rec d = foldDoc Vacio (\texto rec -> Texto texto rec) (\espacios rec -> Linea (espacios + k) rec) d
-
---Por tanto, podemos reemplazar el lado izquierdo por la definición de indentar.
-
---(\texto rec -> Texto texto rec) s (indentar k d) = Texto s (indentar k d) { Def indentar }
-
---Texto s (indentar k d) = Texto s (indentar k d) ☑ { por Eta η dos veces }
-
-indentar :: Int -> Doc -> Doc
-{I0} indentar i = foldDoc Vacio (\texto rec -> Texto texto rec) (\espacios rec -> Linea (espacios + i) rec)
-
 L3: indentar m (Linea k d) = Linea (m+k) (indentar m d)
 
 Usando la definición de indentar:
