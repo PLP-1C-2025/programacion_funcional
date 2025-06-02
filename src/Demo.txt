@@ -84,8 +84,6 @@ Si logramos demostrar L1, L2, L3, entonces nuestro P(x) es válido para todo x :
 
 Pasamos a demostrar los Lemas:
 
-X BORRAR Aclaración para los Lemas L2 y L3: rec = foldDoc Vacio (\texto rec' -> Texto texto rec') (\espacios rec' -> Linea (espacios + i) rec') { Por def de foldDoc }.
-
 L1: indentar k Vacio = Vacio
 
 Usando la definición de indentar (y utilizando principio de extensionalidad):
@@ -126,7 +124,7 @@ indentar k (Texto s d)
 
 --(\texto rec -> Texto texto rec) s (rec d) = Texto s (indentar k d) { Por caso de Texto }
 
---Luego, rec d = foldDoc Vacio (\texto rec' -> Texto texto rec') (\espacios rec' -> Linea (espacios + k) rec') d
+--Luego, rec d = foldDoc Vacio (\texto rec -> Texto texto rec) (\espacios rec -> Linea (espacios + k) rec) d
 
 --Por tanto, podemos reemplazar el lado izquierdo por la definición de indentar.
 
