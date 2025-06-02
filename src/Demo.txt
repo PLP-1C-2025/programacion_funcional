@@ -114,10 +114,10 @@ indentar k (Texto s d)
     Texto texto documentoRestante ->  (\texto rec -> Texto texto rec) texto (rec documentoRestante)
     ... 
     where rec = foldDoc Vacio (\texto rec -> Texto texto rec) (\espacios rec -> Linea (espacios + k) rec) { F0 } (Entra en el caso texto)
-= (\texto' recTexto -> Texto texto' recTexto) s (rec d) { DEF CASE }
-= (\rec' -> Texto s recTexto) (rec d) { BETA }
+= (\texto rec -> Texto texto rec) s (rec d) { DEF CASE }
+= (\rec -> Texto s rec) (rec d) { BETA }
 = Texto s (rec d) { BETA }
-= Texto s (foldDoc Vacio (\texto recTexto -> Texto texto recTexto) (\espacios recEspacios -> Linea (espacios + k) recEspacios) d) { DEF DE REC EN EL FOLD }
+= Texto s (foldDoc Vacio (\texto rec -> Texto texto rec) (\espacios rec -> Linea (espacios + k) rec) d) { DEF DE REC EN EL FOLD }
 = Texto s (indentar k d) { I0 }
 
 --foldDoc Vacio (\texto rec -> Texto texto rec) (\espacios rec -> Linea (espacios + k) rec) Texto s d = Texto s (indentar k d) {Def indentar, Principio de extensionalidad}
@@ -134,7 +134,6 @@ indentar k (Texto s d)
 
 --Texto s (indentar k d) = Texto s (indentar k d) ☑ { por Eta η dos veces }
 
-
 indentar :: Int -> Doc -> Doc
 {I0} indentar i = foldDoc Vacio (\texto rec -> Texto texto rec) (\espacios rec -> Linea (espacios + i) rec)
 
@@ -143,22 +142,22 @@ L3: indentar m (Linea k d) = Linea (m+k) (indentar m d)
 Usando la definición de indentar:
 
 indentar m (Linea k d) 
-= foldDoc Vacio (\texto recTexto -> Texto texto recTexto) (\espacios recEspacios -> Linea (espacios + m) recEspacios) () { I0 } 
+= foldDoc Vacio (\texto rec -> Texto texto rec) (\espacios rec -> Linea (espacios + m) rec) (Linea k d) { I0 } 
 = case (Linea k d) of 
-    Linea k d -> (\espacios recEspacios -> Linea (espacios + m) recEspacios) k (rec d)
+    Linea k d -> (\espacios rec -> Linea (espacios + m) rec) k (rec d)
     ... 
-    where rec = foldDoc Vacio (\texto recTexto -> Texto texto recTexto) (\espacios recEspacios -> Linea (espacios + m) recEspacios) { F0 } (Entra en el caso linea)
-= (\espacios recEspacios -> Linea (espacios + m) recEspacios) k (rec d) { DEF CASE }
-= (\recEspacios -> Linea (k + m) recEspacios) (rec d) { BETA }
+    where rec = foldDoc Vacio (\texto rec -> Texto texto rec) (\espacios rec -> Linea (espacios + m) rec) { F0 } (Entra en el caso linea)
+= (\espacios rec -> Linea (espacios + m) rec) k (rec d) { DEF CASE }
+= (\rec -> Linea (k + m) rec) (rec d) { BETA }
 = Linea (k + m) (rec d) { BETA }
 
 Por la definición de indentar, reemplazando el rec:
 
-Linea (k + m) (rec d) = Linea (k + m) (foldDoc Vacio (\texto recTexto -> Texto texto recTexto) (\espacios recEspacios -> Linea (espacios + m) recEspacios) d) { DEF DE REC en el WHERE }
+Linea (k + m) (rec d) = Linea (k + m) (foldDoc Vacio (\texto rec -> Texto texto rec) (\espacios rec -> Linea (espacios + m) rec) d) { DEF DE REC en el WHERE }
 
 Luego por def de Indentar:
 
-Linea (k + m) (foldDoc Vacio (\texto recTexto -> Texto texto recTexto) (\espacios recEspacios -> Linea (espacios + m) recEspacios) d) = Linea (k + m) (indentar m d)
+Linea (k + m) (foldDoc Vacio (\texto rec -> Texto texto rec) (\espacios rec -> Linea (espacios + m) rec) d) = Linea (k + m) (indentar m d)
 
 Y como la suma es conmutativa:
 
