@@ -84,7 +84,7 @@ Si logramos demostrar L1, L2, L3, entonces nuestro P(x) es válido para todo x :
 
 Pasamos a demostrar los Lemas:
 
-Aclaración para los Lemas L2 y L3: rec = foldDoc Vacio (\texto rec' -> Texto texto rec') (\espacios rec' -> Linea (espacios + i) rec') { Por def de foldDoc }.
+X BORRAR Aclaración para los Lemas L2 y L3: rec = foldDoc Vacio (\texto rec' -> Texto texto rec') (\espacios rec' -> Linea (espacios + i) rec') { Por def de foldDoc }.
 
 L1: indentar k Vacio = Vacio
 
@@ -98,11 +98,6 @@ foldDoc Vacio (\texto rec -> Texto texto rec) (\espacios rec -> Linea (espacios 
 = case Vacio of 
   Vacio -> Vacio
   ... { F0 } (Entra en el caso Vacio)
-  
-  --Texto texto documentoRestante ->  (\texto' rec' -> Texto texto' rec') texto (rec documentoRestante) 
-  --Linea cantEspacios documentoRestante -> (\espacios rec' -> Linea (espacios + k) rec') cantEspacios (rec documentoRestante)
-  where rec = foldDoc Vacio (\texto' rec' -> Texto texto' rec') (\espacios rec' -> Linea (espacios + k) rec) { F0 } 
-  
 = Vacio { DEF CASE }
 
 Luego,
@@ -114,11 +109,11 @@ L2: indentar k (Texto s d) = Texto s (indentar k d)
 Aplicando la definición de indentar:
 
 indentar k (Texto s d) 
-= foldDoc Vacio (\texto recTexto -> Texto texto recTexto) (\espacios recEspacios -> Linea (espacios + k) recEspacios) (Texto s d) { I0 } 
+= foldDoc Vacio (\texto rec -> Texto texto rec) (\espacios rec -> Linea (espacios + k) rec) (Texto s d) { I0 } 
 = case (Texto s d) of 
-    Texto texto documentoRestante ->  (\texto' recTexto -> Texto texto' recTexto) texto (rec documentoRestante)
+    Texto texto documentoRestante ->  (\texto rec -> Texto texto rec) texto (rec documentoRestante)
     ... 
-    where rec = foldDoc Vacio (\texto recTexto -> Texto texto recTexto) (\espacios recEspacios -> Linea (espacios + k) recEspacios) { F0 } (Entra en el caso texto)
+    where rec = foldDoc Vacio (\texto rec -> Texto texto rec) (\espacios rec -> Linea (espacios + k) rec) { F0 } (Entra en el caso texto)
 = (\texto' recTexto -> Texto texto' recTexto) s (rec d) { DEF CASE }
 = (\rec' -> Texto s recTexto) (rec d) { BETA }
 = Texto s (rec d) { BETA }
