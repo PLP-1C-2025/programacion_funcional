@@ -52,6 +52,9 @@ No es un esquema iterativo porque no posee contadores ni acumuladores
 No alcanza un esquema estructural porque operamos sobre el resto del PPON en: pponADoc (snd tupla)
 No alcanza un esquema primitivo porque usamos todas las llamadas recursivas anteriores al hacer 
 map (\(elemTexto, elemPPON) -> texto (show elemTexto) <+> texto ": " <+> pponADoc elemPPON) pps
+
+El tipo de recursion es primitiva ya que la recursion en rec es estructural en pps. Pero en la guarda del if estoy manipulando 
+el pps más que para solo la recursion, por lo que estaría rompiendo la estructural, pasando a la recursion primitiva
 -} 
 
 pponADoc :: PPON -> Doc
@@ -61,5 +64,4 @@ pponADoc pp = case pp of
   ObjetoPP  pps   ->  if pponObjetoSimple (ObjetoPP pps) then
                         aplanar rec
                       else rec
-
-  where rec = entreLlaves (map (\(elemTexto, elemPPON) -> texto (show elemTexto) <+> texto ": " <+> pponADoc elemPPON) pps)
+    where rec = entreLlaves (map (\(elemTexto, elemPPON) -> texto (show elemTexto) <+> texto ": " <+> pponADoc elemPPON) pps)
